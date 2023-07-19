@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:multi_image_picker_plus/multi_image_picker_plus.dart';
 
 import '../consonent.dart';
 import '../food_model.dart';
@@ -60,11 +61,28 @@ class _FoodAddPageState extends State<FoodAddPage> {
                             "오늘 어떤 음식을 드셨나요?",
                             style: TextStyle(fontSize: 20),
                           ),
-                          InkWell(child: SizedBox(width: 250, child: Image.asset("assets/img/food.png")), onTap: () {})
+                          InkWell(
+                            child: SizedBox(
+                                width: 250,
+                                child: food.image.isEmpty
+                                    ? AspectRatio(
+                                        aspectRatio: 1,
+                                        child: Image.asset("assets/img/food.png"),
+                                      )
+                                    : AssetThumb(asset: Asset(food.image, "food.png", 0, 0), width: 100, height: 100)),
+                            onTap: () {
+                              selectImage();
+                            },
+                          )
                         ],
                       ),
                     );
                   } else if (idx == 1) {
+                    String _t = food.time.toString();
+
+                    String _m = _t.substring(_t.length - 2);
+                    String _h = _t.substring(0, _t.length - 2);
+                    TimeOfDay time = TimeOfDay(hour: int.parse(_h), minute: int.parse(_m));
                     return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       child: Column(
@@ -75,7 +93,20 @@ class _FoodAddPageState extends State<FoodAddPage> {
                               " 식사시간",
                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                             ),
-                            Text(food.time.toString()),
+                            InkWell(
+                                onTap: () async {
+                                  TimeOfDay? _time =
+                                      await showTimePicker(context: context, initialTime: TimeOfDay.now());
+
+                                  if (_time == null) {
+                                    return;
+                                  }
+                                  setState(() {
+                                    food.time = int.parse("${_time.hour}${Utils.makeTowDiget(_time.minute)}");
+                                  });
+                                },
+                                child: Text(
+                                    "${time.hour > 11 ? "오전" : "오후"}${Utils.makeTowDiget(time.hour % 12)}:${Utils.makeTowDiget(time.minute)}")),
                           ]),
                           const SizedBox(height: 4),
                           GridView.count(
@@ -165,8 +196,8 @@ class _FoodAddPageState extends State<FoodAddPage> {
                           ),
                           const SizedBox(height: 4),
                           TextField(
-                            maxLines: 6,
-                            minLines: 6,
+                            maxLines: 8,
+                            minLines: 8,
                             keyboardType: TextInputType.multiline,
                             controller: memoController,
                             decoration: InputDecoration(
@@ -191,5 +222,17 @@ class _FoodAddPageState extends State<FoodAddPage> {
         ),
       ),
     );
+  }
+
+  Future<void> selectImage() async {
+    final _img = await MultiImagePicker.pickImages();
+
+    if (_img.isNotEmpty) {
+      return;
+    }
+
+    setState(() {
+      food.image = _img.first.identifier;
+    });
   }
 }
