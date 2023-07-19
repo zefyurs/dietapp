@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: [
                       TextButton(
-                        child: Text("식단"),
+                        child: const Text("식단"),
                         onPressed: () async {
                           Navigator.of(context).pop();
 
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                       TextButton(
-                        child: Text("운동"),
+                        child: const Text("운동"),
                         onPressed: () async {
                           // await Navigator.of(context).push(
                           //     MaterialPageRoute(builder: (ctx) => WorkoutAddPage(
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                       TextButton(
-                        child: Text("눈바디"),
+                        child: const Text("눈바디"),
                         onPressed: () async {
                           // await Navigator.of(context).push(
                           //     MaterialPageRoute(builder: (ctx) => EyeBodyAddPage(
@@ -144,10 +144,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getMainPage() {
-    return Container(
-        child: const Column(children: [
+    return const Column(children: [
       Text('main page'),
-    ]));
+    ]);
   }
   //         children: [
   //           todayFood.isEmpty ? Container() : Container(
